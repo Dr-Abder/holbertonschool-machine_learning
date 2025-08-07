@@ -2,6 +2,8 @@
 """
 Cette fonction sert à calculer la forme d'une matrice
 """
+
+
 def matrix_shape(matrix):
     """
     récursivité
