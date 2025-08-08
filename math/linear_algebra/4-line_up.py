@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cette fonction additionne les tableaus élément par élément
+Cette fonction additionne deux tableaus élément par élément
 """
 
 
