@@ -5,6 +5,9 @@ Cette fonction additionne deux matrices élément par élément
 
 
 def add_matrices2D(mat1, mat2):
+    """
+    mat1 + mat2
+    """
 
     for row1, row2 in zip(mat1, mat2):
         if len(row1) != len(row2):
