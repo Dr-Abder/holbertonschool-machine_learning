@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-A function that performs matrix multiplication
+Fonction sert à faire un produit matriciel
 """
 
 import numpy as np
@@ -8,10 +8,6 @@ import numpy as np
 
 def np_matmul(mat1, mat2):
     """
-    Performs matrix multiplication between two numpy.ndarrays.
-
-    Returns:
-    - A new numpy.ndarray resulting from the matrix multiplication of mat1
-    and mat2.
+    Return le produit matriciel de mat1 et mat2 avec @
     """
     return mat1 @ mat2
