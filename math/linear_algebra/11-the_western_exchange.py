@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-A function that transposes a matrix using numpy.
+Fonction qui transpose une matrice
 """
 
 
 def np_transpose(matrix):
     """
-    Tranpose the given numpy.ndarray.
+    Transpose de la matrice avec .T
     """
     return matrix.T
