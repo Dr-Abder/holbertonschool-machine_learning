@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-A function that concatenates two matrices along a specific axis
+Fonction qui concatène deux matrice
 """
 
 import numpy as np
@@ -9,12 +9,13 @@ import numpy as np
 def np_cat(mat1, mat2, axis=0):
     """
     Parameters:
-    - mat1: A numpy.ndarray
-    - mat2: A numpy.ndarray
-    - axis: The axis along which to concatenate the matrices.
+    - mat1: matrice
+    - mat2: matrice
+    - axis: l'axe pour voir dans qu'elle sens sera la concaténation
 
     Returns:
-    - A new numpy.ndarray resulting from concate,ato,g mat1 and
-    mat2 along the specific axis
+    - Une nouvelle matrice de mat1 + mat2 qui à été concaténer selon
+    l'axe , soit concaténation verticale du coup empilement de lignes si axis = 0
+    sinon concaténation horizontale du coup extension des colonnes si axis = 1
     """
     return np.concatenate((mat1, mat2), axis=axis)

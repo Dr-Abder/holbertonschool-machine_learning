@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-A function that performs element-wise arithmetic
-operations on numpy.ndarrays.
+Fonction arithmetique comprennent l'addition ( + ),
+la soustraction ( - ),la multiplication ( * ), la division ( / ) 
 """
 
 
 def np_elementwise(mat1, mat2):
     """
-    Performs element-wise addition, subtraction, multiplication,
-    and division
+    Retourne mat1 et mat2 avec leur variable selon 
+    leur type d'opération arithmetique
     """
     addition = mat1 + mat2
     subtraction = mat1 - mat2
