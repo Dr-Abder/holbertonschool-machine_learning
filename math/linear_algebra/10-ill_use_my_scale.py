@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-a function that calculates the shape of a numpy.ndarray
+Fonction qui retourne la forme de la matrice
 """
 
 
 def np_shape(matrix):
     """
-    Calculate the shape of a numpy.ndarray
+    Calcul la forme de matrice avec .shape
     """
     return matrix.shape
