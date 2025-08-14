@@ -21,5 +21,4 @@ def line():
     # Trace les points x[i], y[i] (Chaque valeur x[i] correspond à y[i])
     # 'r-' = ligne rouge continue
 
-    plt.savefig("0-line.png")
     plt.show()
