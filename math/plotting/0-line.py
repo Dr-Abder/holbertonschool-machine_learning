@@ -23,3 +23,4 @@ def line():
 
     plt.savefig("0-line.png")
     plt.show()
+    # Enregistre le graphique et le montre
