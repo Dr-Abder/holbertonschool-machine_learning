@@ -21,7 +21,7 @@ def two():
     # Spécification du graphique (couleur, titre, échelle, limite)
     plt.plot(x, y1, 'r--', label='C-14')
     plt.plot(x, y2, 'g-', label='Ra-226')
-    plt.title("Exponential Decay of C-14")
+    plt.title("Exponential Decay of Radioactive Elements")
     plt.xlabel("Time (years)")
     plt.ylabel("Fraction Remaining")
     plt.xlim(0, 20000)
