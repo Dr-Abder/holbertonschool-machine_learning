@@ -19,11 +19,12 @@ def change_scale():
     plt.figure(figsize=(6.4, 4.8))
 
     # Spécification du graphique (couleur, titre, échelle, limite)
-    plt.plot(x, y, 'b-')
+    plt.plot(x, y)
     plt.yscale('log')
     plt.xlim(0, 28650)
     plt.title("Exponential Decay of C-14")
     plt.xlabel("Time (years)")
     plt.ylabel("Fraction Remaining")
+
     plt.savefig("2-change_scale.png")
     plt.show()
