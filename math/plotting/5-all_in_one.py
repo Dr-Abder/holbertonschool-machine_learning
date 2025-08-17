@@ -32,7 +32,7 @@ def all_in_one():
     np.random.seed(5)
     student_grades = np.random.normal(68, 15, 50)
 
-    fig = plt.figure(figsize=(6.4, 4.8))
+    fig = plt.figure(figsize=(6.4, 4.8), constrained_layout=True)
     fig.suptitle('All in One', fontsize='x-large')
 
     # subplot1 graphique linéaire
@@ -82,8 +82,6 @@ def all_in_one():
     ax5.set_ylim(0, 30)
     ax5.set_yticks(np.arange(0, 31, 10))
     ax5.set_xticks(np.arange(0, 110, 10))
-
-    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 
     plt.savefig("5-all_in_one.png")
     plt.show()
