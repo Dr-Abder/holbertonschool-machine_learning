@@ -37,6 +37,8 @@ def all_in_one():
 
     # subplot1 graphique linéaire
     ax1 = fig.add_subplot(3, 2, 1)
+    plt.ylim(0, 1001)  
+    plt.yticks(np.arange(0, 1001, 500))
     ax1.plot(y0, 'r-')
     # l’axe x commence à 0 et finit au dernier index
     ax1.set_xlim(0, len(y0)-1)
@@ -78,6 +80,7 @@ def all_in_one():
     ax5.set_title('Project A', fontsize='x-small')
     ax5.set_xlim(0, 100)
     ax5.set_ylim(0, 30)
+    ax5.set_yticks(np.arange(0, 31, 10))
     ax5.set_xticks(np.arange(0, 110, 10))
 
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
