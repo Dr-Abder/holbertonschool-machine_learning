@@ -37,7 +37,7 @@ def all_in_one():
 
     # subplot1 graphique linéaire
     ax1 = fig.add_subplot(3, 2, 1)
-    plt.ylim(0, 1001)  
+    plt.ylim(0, 1001)
     plt.yticks(np.arange(0, 1001, 500))
     ax1.plot(y0, 'r-')
     # l’axe x commence à 0 et finit au dernier index
