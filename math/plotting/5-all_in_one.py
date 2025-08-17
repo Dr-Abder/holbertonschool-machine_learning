@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
+"""
+Cette fonction permet de rassembler plusieurs types de
+graphique dans un seul et unique bloque (Une figure)
+"""
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 def all_in_one():
 
@@ -27,23 +32,24 @@ def all_in_one():
     np.random.seed(5)
     student_grades = np.random.normal(68, 15, 50)
 
-
-    fig = plt.figure(figsize=(6.4 ,4.8))
+    fig = plt.figure(figsize=(6.4, 4.8))
     fig.suptitle('All in One', fontsize='x-large')
 
-    #subplot1
-    ax1= fig.add_subplot(3,2,1)
-    ax1.plot(y0,'r-')
+    # subplot1 graphique linéaire
+    ax1 = fig.add_subplot(3, 2, 1)
+    ax1.plot(y0, 'r-')
+    # l’axe x commence à 0 et finit au dernier index
+    ax1.set_xlim(0, len(y0)-1)
 
-    #subplot2
-    ax2= fig.add_subplot(3,2,2)
-    ax2.scatter(x1, y1, color='magenta')
+    # subplot2 graphique à nuage de point
+    ax2 = fig.add_subplot(3, 2, 2)
+    ax2.scatter(x1, y1, color='magenta', s=5)
     ax2.set_title("Men's Height vs Weight", fontsize='x-small')
     ax2.set_xlabel("Height (in)", fontsize='x-small')
     ax2.set_ylabel("Weight (lbs)", fontsize='x-small')
 
-    #subplot3
-    ax3= fig.add_subplot(3,2,3)
+    # subplot3 graphique linéaire à l'échelle logarithmique
+    ax3 = fig.add_subplot(3, 2, 3)
     ax3.plot(x2, y2, label='C-14 decay')
     ax3.set_yscale('log')
     ax3.set_xlim(0, 28650)
@@ -51,19 +57,20 @@ def all_in_one():
     ax3.set_xlabel("Time (years)", fontsize='x-small')
     ax3.set_ylabel("Fraction Remaining", fontsize='x-small')
 
-    #subplot4
-    ax4= fig.add_subplot(3,2,4)
+    # subplot4 graphique linéaire à deux coubre
+    ax4 = fig.add_subplot(3, 2, 4)
     ax4.plot(x3, y31, 'r--', label='C-14')
     ax4.plot(x3, y32, 'g-', label='Ra-226')
-    ax4.set_title("Exponential Decay of Radioactive Elements", fontsize='x-small')
+    title_subplot4 = "Exponential Decay of Radioactive Elements"
+    ax4.set_title(title_subplot4, fontsize='x-small')
     ax4.set_xlabel("Time (years)", fontsize='x-small')
     ax4.set_ylabel("Fraction Remaining", fontsize='x-small')
     ax4.set_xlim(0, 20000)
     ax4.set_ylim(0, 1)
     ax4.legend(loc="upper right", fontsize='x-small')
 
-    #subplot5
-    ax5= fig.add_subplot(3,2,(5, 6))
+    # subplot5 historigramme
+    ax5 = fig.add_subplot(3, 2, (5, 6))
     bins = np.arange(0, 101, 10)
     ax5.hist(student_grades, bins, edgecolor='black')
     ax5.set_xlabel('Grades', fontsize='x-small')
