@@ -21,18 +21,19 @@ def bars():
 
     barres = np.arange(3)
 
-    # Create stacked bars
-    for idx, row in enumerate(fruit):
-        plt.bar(people, row, color=colors[idx], label=fruits[idx],
-                bottom=bottom, width=0.5)
-        bottom += row
-
-    # Labeling and setting limits
-    plt.ylabel('Quantity of Fruit')
-    plt.ylim(0, 80)
+    # Spécification du graphique (couleur, titre, échelle, limite)
+    plt.bar(barres, fruit[0], color=couleur[0], width=0.5)
+    b1 = fruit[0]
+    b2 = fruit[0]+fruit[1]
+    b3 = fruit[0]+fruit[1]+fruit[2]
+    plt.bar(barres, fruit[1], color=couleur[1], width=0.5, bottom=b1)
+    plt.bar(barres, fruit[2], color=couleur[2], width=0.5, bottom=b2)
+    plt.bar(barres, fruit[3], color=couleur[3], width=0.5, bottom=b3)
+    plt.xticks(barres, personne)
+    plt.ylabel("Quantity of Fruit")
     plt.yticks(np.arange(0, 81, 10))
-    plt.title('Number of Fruit per Person')
+    plt.title("Number of Fruit per Person")
+    plt.legend(fruit_labels)
 
-    # Show the plot
     plt.savefig("6-bars.png")
     plt.show()
