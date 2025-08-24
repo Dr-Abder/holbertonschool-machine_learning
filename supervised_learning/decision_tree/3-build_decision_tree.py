@@ -157,7 +157,7 @@ class Leaf(Node):
         Returns:
             str: A string representation of this leaf.
         """
-        return (f"-> leaf [value={self.value}] ")
+        return (f"-> leaf [value={self.value}]")
 
     def max_depth_below(self):
         """
