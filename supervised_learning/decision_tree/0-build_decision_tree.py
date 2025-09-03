@@ -99,7 +99,7 @@ class Decision_Tree():
         self.predict = None
 
     def depth(self):
-        return self.root.max_depth_below()
         """Retourne la profondeur maximale de l’arbre.
         Cette méthode délègue le calcul à la racine de l’arbre.
         """
+        return self.root.max_depth_below()
