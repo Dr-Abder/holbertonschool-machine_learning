@@ -65,7 +65,10 @@ class Leaf(Node):
         self.depth = depth
 
     def max_depth_below(self):
-        return self.depth   # retourne la profondeur d'une feuille (self.depth)
+        """
+        retourne la profondeur d'une feuille (self.depth)
+        """
+        return self.depth
 
 
 class Decision_Tree():
@@ -78,8 +81,11 @@ class Decision_Tree():
         split_criterion (str): Méthode de séparation (par défaut "random").
         root (Node): Racine de l’arbre.
     """
-    def __init__(self, max_depth=10, min_pop=1,
-                 seed=0, split_criterion="random", root=None):
+    def __init__(self, max_depth=10, min_pop=1, seed=0,
+                 split_criterion="random", root=None):
+        """
+        Initialise les paramètres de l'arbre décision
+        """
         self.rng = np.random.default_rng(seed)
         if root:
             self.root = root
