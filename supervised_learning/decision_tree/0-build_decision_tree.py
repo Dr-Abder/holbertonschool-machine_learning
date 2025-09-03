@@ -4,7 +4,9 @@ import numpy as np
 
 
 class Node:
-    def __init__(self, feature=None, threshold=None, left_child=None, right_child=None, is_root=False, depth=0):
+    def __init__(self, feature=None, threshold=None, left_child=None,
+                 right_child=None, is_root=False, depth=0):
+
         self.feature = feature
         self.threshold = threshold
         self.left_child = left_child
@@ -18,7 +20,8 @@ class Node:
         """
         max_depth_below sert à trouver la profondeur maximale de l’arbre.
         Elle fonctionne grâce à la récursivité :
-        Si le nœud est une feuille (Leaf), la profondeur est simplement self.depth.
+        Si le nœud est une feuille (Leaf), la profondeur est
+        simplement self.depth.
         Si le nœud est un nœud interne (Node), on appelle la même méthode
         sur ses enfants gauche et droit.
         On compare les deux profondeurs et on renvoie le maximum.
@@ -26,8 +29,10 @@ class Node:
         feuilles puis remonte en prenant la profondeur la plus grande.
         """
 
-        max_depth_left = self.left_child.max_depth_below()  # Profondeur max du noeud de gauche
-        max_depth_right = self.right_child.max_depth_below()    # Profondeur max du noeud de droite
+        max_depth_left = self.left_child.max_depth_below()
+        # Profondeur max du noeud de gauche
+        max_depth_right = self.right_child.max_depth_below()
+        # Profondeur max du noeud de droite
         return max(max_depth_left, max_depth_right)
 
 
@@ -43,7 +48,8 @@ class Leaf(Node):
 
 
 class Decision_Tree():
-    def __init__(self, max_depth=10, min_pop=1, seed=0, split_criterion="random", root=None):
+    def __init__(self, max_depth=10, min_pop=1,
+                 seed=0, split_criterion="random", root=None):
         self.rng = np.random.default_rng(seed)
         if root:
             self.root = root
