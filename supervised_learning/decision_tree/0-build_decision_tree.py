@@ -1,9 +1,21 @@
 #!/usr/bin/env python3
-
+"""
+Arbre de décision
+Composé de classe d'un arbre de décision
+et de feuille
+"""
 import numpy as np
 
 
 class Node:
+    """Représente un nœud interne de l'arbre de décision.
+
+    Un nœud contient une feature (attribut), un seuil de décision (threshold),
+    et deux enfants (gauche et droit). Chaque nœud garde aussi en mémoire
+    sa profondeur dans l’arbre et peut calculer la profondeur maximale
+    des sous-arbres en dessous de lui.
+    """
+
     def __init__(self, feature=None, threshold=None, left_child=None,
                  right_child=None, is_root=False, depth=0):
 
@@ -37,6 +49,10 @@ class Node:
 
 
 class Leaf(Node):
+    """Représente une feuille de l’arbre de décision.
+    Une feuille ne possède pas d’enfants, seulement une valeur prédite
+    et sa profondeur dans l’arbre.
+    """
     def __init__(self, value, depth=None):
         super().__init__()
         self.value = value
@@ -44,10 +60,19 @@ class Leaf(Node):
         self.depth = depth
 
     def max_depth_below(self):
-        return self.depth   # retourne la profondeur
+        return self.depth   # retourne la profondeur d'une feuille (self.depth)
 
 
 class Decision_Tree():
+    """Classe principale représentant un arbre de décision.
+
+    Attributs :
+        max_depth (int): Profondeur maximale autorisée.
+        min_pop (int): Taille minimale de population dans un nœud.
+        rng (np.random.Generator): Générateur aléatoire pour les splits.
+        split_criterion (str): Méthode de séparation (par défaut "random").
+        root (Node): Racine de l’arbre.
+    """
     def __init__(self, max_depth=10, min_pop=1,
                  seed=0, split_criterion="random", root=None):
         self.rng = np.random.default_rng(seed)
@@ -64,3 +89,6 @@ class Decision_Tree():
 
     def depth(self):
         return self.root.max_depth_below()
+        """Retourne la profondeur maximale de l’arbre.
+        Cette méthode délègue le calcul à la racine de l’arbre.
+        """
