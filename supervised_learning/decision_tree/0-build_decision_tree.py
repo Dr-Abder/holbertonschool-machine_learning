@@ -9,7 +9,6 @@ import numpy as np
 
 class Node:
     """Représente un nœud interne de l'arbre de décision.
-
     Un nœud contient une feature (attribut), un seuil de décision (threshold),
     et deux enfants (gauche et droit). Chaque nœud garde aussi en mémoire
     sa profondeur dans l’arbre et peut calculer la profondeur maximale
@@ -18,7 +17,10 @@ class Node:
 
     def __init__(self, feature=None, threshold=None, left_child=None,
                  right_child=None, is_root=False, depth=0):
-
+        """
+        Initialise les noeuds avec les features optimal, threshold values,
+        children, root status, and depth.
+        """
         self.feature = feature
         self.threshold = threshold
         self.left_child = left_child
@@ -54,6 +56,9 @@ class Leaf(Node):
     et sa profondeur dans l’arbre.
     """
     def __init__(self, value, depth=None):
+        """
+        Initialise la feuille avec une valeur et profondeur spécifique
+        """
         super().__init__()
         self.value = value
         self.is_leaf = True
