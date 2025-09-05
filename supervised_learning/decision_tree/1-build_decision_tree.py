@@ -54,7 +54,7 @@ class Node:
         """Compte les nœuds dans le sous-arbre à partir de ce nœud.
         Args:
         only_leaves (bool): Si True, ne compte que les feuilles.
-                            Si False, compte aussi les nœuds internes.
+                            Si False, compte aussi les noeuds internes.
         Returns:
         int: Nombre de nœuds ou de feuilles dans le sous-arbre.
         """
