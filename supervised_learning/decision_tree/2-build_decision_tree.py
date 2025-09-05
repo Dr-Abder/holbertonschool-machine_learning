@@ -66,22 +66,16 @@ class Node:
         else:
             return 1 + l_count + r_count
 
-    def __str__(self):
-        """
-        Returns a string representation of the node and it's children
-        """
+    def __str__(self, prefix="", is_left=True):
         node_type = "root" if self.is_root else "node"
-        details = (f"{node_type} [feature={self.feature}, "
-                   f"threshold={self.threshold}]\n")
+        node_str = f"{node_type} [feature={self.feature}, threshold={self.threshold}]\n"
+
         if self.left_child:
-            left_str = self.left_child.__str__().replace("\n", "\n    |  ")
-            details += f"    +---> {left_str}"
-
+            node_str += self.left_child.__str__(prefix + ("|   " if is_left else "    "), True)
         if self.right_child:
-            right_str = self.right_child.__str__().replace("\n", "\n       ")
-            details += f"\n    +---> {right_str}"
+            node_str += self.right_child.__str__(prefix + ("|   " if is_left else "    "), False)
 
-        return details
+        return prefix + node_str
 
 class Leaf(Node):
     """Représente une feuille de l’arbre de décision.
@@ -112,8 +106,8 @@ class Leaf(Node):
         """
         return 1
 
-    def __str__(self):
-        return (f"-> leaf [value={self.value}]")
+    def __str__(self, prefix="", is_left=True):
+        return prefix + f"-> leaf [value={self.value}]\n"
 
 
 class Decision_Tree():
@@ -158,4 +152,4 @@ class Decision_Tree():
         return self.root.count_nodes_below(only_leaves=only_leaves)
 
     def __str__(self,):
-        return self.root.__str__() + "\n"
+        return self.root.__str__()
