@@ -66,31 +66,22 @@ class Node:
         else:
             return 1 + l_count + r_count
 
-    def left_child_add_prefix(self, text):
-        lines = text.split("\n")           # on coupe le texte de l'enfant ligne par ligne
-        new_text = "    +--" + lines[0] + "\n"   # première ligne avec le préfixe +--
-        for x in lines[1:]:
-            new_text += "   |  " + x + "\n"     # les autres lignes avec un petit | pour montrer la branche
-        return new_text
-
-    def right_child_add_prefix(self, text):
-        lines = text.split("\n")
-        new_text = "    +--" + lines[0] + "\n"
-        for x in lines[1:]:
-            new_text += "       " + x +"\n"
-        return new_text
-
     def __str__(self):
-        if self.is_root:
-            node_text = f"root [feature={self.feature}, threshold={self.threshold}]"
-        else :
-            node_text = f"node [feature={self.feature}, threshold={self.threshold}]"
+        """
+        Returns a string representation of the node and it's children
+        """
+        node_type = "root" if self.is_root else "node"
+        details = (f"{node_type} [feature={self.feature}, "
+                   f"threshold={self.threshold}]\n")
+        if self.left_child:
+            left_str = self.left_child.__str__().replace("\n", "\n    |  ")
+            details += f"    +---> {left_str}"
 
-        if self.left_child is not None:
-            node_text += self.left_child_add_prefix(str(self.left_child))
-        if self.right_child is not None:
-            node_text += self.right_child_add_prefix(str(self.right_child))
-        return node_text
+        if self.right_child:
+            right_str = self.right_child.__str__().replace("\n", "\n       ")
+            details += f"\n    +---> {right_str}"
+
+        return details
 
 class Leaf(Node):
     """Représente une feuille de l’arbre de décision.
