@@ -85,8 +85,11 @@ class Node:
             node_text = f"root [feature={self.feature}, threshold={self.threshold}]"
         else :
             node_text = f"node [feature={self.feature}, threshold={self.threshold}]"
-        node_text += self.left_child_add_prefix(self.left_child.__str__())
-        node_text += self.right_child_add_prefix(self.right_child.__str__())
+
+        if self.left_child is not None:
+            node_text += self.left_child_add_prefix(str(self.left_child))
+        if self.right_child is not None:
+            node_text += self.right_child_add_prefix(str(self.right_child))
         return node_text
 
 class Leaf(Node):
