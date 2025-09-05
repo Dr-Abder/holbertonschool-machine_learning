@@ -81,7 +81,7 @@ class Node:
         return new_text
 
     def __str__(self):
-        if self.is_root == True:
+        if self.is_root:
             node_text = f"root [feature={self.feature}, threshold={self.threshold}]"
         else :
             node_text = f"node [feature={self.feature}, threshold={self.threshold}]"
