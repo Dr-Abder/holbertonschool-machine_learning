@@ -70,7 +70,7 @@ class Node:
         lines = text.split("\n")           # on coupe le texte de l'enfant ligne par ligne
         new_text = "    +--" + lines[0] + "\n"   # première ligne avec le préfixe +--
         for x in lines[1:]:
-            new_text += "    |  " + x + "\n"     # les autres lignes avec un petit | pour montrer la branche
+            new_text += "   |  " + x + "\n"     # les autres lignes avec un petit | pour montrer la branche
         return new_text
 
     def right_child_add_prefix(self, text):
@@ -81,7 +81,10 @@ class Node:
         return new_text
 
     def __str__(self):
-        node_text = f"node [feature={self.feature}, threshold={self.threshold}]"
+        if self.is_root == True:
+            node_text = f"root [feature={self.feature}, threshold={self.threshold}]"
+        else :
+            node_text = f"node [feature={self.feature}, threshold={self.threshold}]"
         node_text += self.left_child_add_prefix(self.left_child.__str__())
         node_text += self.right_child_add_prefix(self.right_child.__str__())
         return node_text
@@ -160,5 +163,5 @@ class Decision_Tree():
         """
         return self.root.count_nodes_below(only_leaves=only_leaves)
 
-    def __str__(self):
+    def __str__(self,):
         return self.root.__str__()
