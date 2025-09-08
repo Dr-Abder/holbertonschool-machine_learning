@@ -66,12 +66,52 @@ class Node:
         else:
             return 1 + l_count + r_count
 
-    def update_bounds_below(self) :
-        if self.is_root : 
-            self.upper = { 0:np.inf }
-            self.lower = {0 : -1*np.inf }
+    def update_bounds_below(self):
+        """
+        Met à jour les bornes (lower et upper) pour chaque
+        nœud de l’arbre de décision.
 
-        for child in [self.left_child, self.right_child] :
+        But :
+        -------
+        À chaque split, un nœud impose une contrainte
+        supplémentaire sur la valeur
+        possible de la feature utilisée pour la séparation.
+        Les bornes représentent l’intervalle valide
+        de valeurs pour chaque feature
+        à l’intérieur de la région définie par ce nœud.
+
+        Exemple :
+        ---------
+        Supposons un split sur feature 0 avec seuil = 30 :
+            - Enfant gauche  : feature_0 ∈ [-∞ , 30]
+            - Enfant droit   : feature_0 ∈ [30 , +∞]
+
+        Si ensuite l’enfant droit split encore sur feature 0 avec seuil = 40 :
+            - Enfant gauche  : feature_0 ∈ [30 , 40]
+            - Enfant droit   : feature_0 ∈ [40 , +∞]
+
+        Donc, plus on descend dans l’arbre, plus les intervalles se resserrent.
+
+        Fonctionnement :
+        ----------------
+        1. Si le nœud est la racine :
+            - lower = {feature : -∞}  (borne inférieure initiale)
+            - upper = {feature : +∞}  (borne supérieure initiale)
+
+        2. Chaque enfant hérite d’une copie des bornes du parent.
+
+        3. Selon que l’enfant est gauche ou droit :
+            - Enfant gauche → borne supérieure (upper) modifiée par le seuil
+            - Enfant droit  → borne inférieure (lower) modifiée par le seuil
+
+        4. Appel récursif pour propager cette mise às
+        jour à tous les descendants.
+        """
+        if self.is_root:
+            self.upper = {0: np.inf}
+            self.lower = {0: -1*np.inf}
+
+        for child in [self.left_child, self.right_child]:
 
             child.lower = self.lower.copy()
             child.upper = self.upper.copy()
@@ -83,7 +123,7 @@ class Node:
                 # borne inférieure modifiée
                 child.upper[self.feature] = self.threshold
 
-        for child in [self.left_child, self.right_child] :
+        for child in [self.left_child, self.right_child]:
             child.update_bounds_below()
 
     def __str__(self):
@@ -154,8 +194,8 @@ class Leaf(Node):
         """
         return [self]
 
-    def update_bounds_below(self) :
-        pass 
+    def update_bounds_below(self)s:
+        pass
 
 
 class Decision_Tree():
@@ -209,5 +249,5 @@ class Decision_Tree():
         """
         return self.root.get_leaves_below()
 
-    def update_bounds(self) :
-        self.root.update_bounds_below() 
+    def update_bounds(self):
+        self.root.update_bounds_below()
