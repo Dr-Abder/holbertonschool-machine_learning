@@ -129,6 +129,9 @@ class Leaf(Node):
         return prefix + f"-> leaf [value={self.value}]"
 
     def get_leaves_below(self):
+        """
+        Fonction qui retourne la feuille elle même
+        """
         return [self]
 
 
