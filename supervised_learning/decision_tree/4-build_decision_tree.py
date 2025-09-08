@@ -78,10 +78,10 @@ class Node:
 
             if child is self.left_child:
                 # borne supérieure modifiée
-                child.upper[self.feature] = self.threshold
+                child.lower[self.feature] = self.threshold
             else:
                 # borne inférieure modifiée
-                child.lower[self.feature] = self.threshold
+                child.upper[self.feature] = self.threshold
 
         for child in [self.left_child, self.right_child] :
             child.update_bounds_below()
