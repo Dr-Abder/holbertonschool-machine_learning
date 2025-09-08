@@ -195,6 +195,10 @@ class Leaf(Node):
         return [self]
 
     def update_bounds_below(self):
+        """
+        la fonction update_bounds_below s'applique que sur
+        les noeuds et non les feuilles car elles ont pas de bornes
+        """
         pass
 
 
@@ -250,4 +254,8 @@ class Decision_Tree():
         return self.root.get_leaves_below()
 
     def update_bounds(self):
+        """
+        appelle la fonction update_bounds_below() pour mettre
+        à jour les bornes lower et upper
+        """
         self.root.update_bounds_below()
