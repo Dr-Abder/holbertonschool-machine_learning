@@ -194,7 +194,7 @@ class Leaf(Node):
         """
         return [self]
 
-    def update_bounds_below(self)s:
+    def update_bounds_below(self):
         pass
 
 
