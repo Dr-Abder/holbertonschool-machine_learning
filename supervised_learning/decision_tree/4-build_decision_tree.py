@@ -146,7 +146,7 @@ class Leaf(Node):
         """
         fonction qui print le résultat
         """
-        return prefix + f"-> leaf [value={self.value}]"
+        return prefix + f"[value={self.value}]"
 
     def get_leaves_below(self):
         """
