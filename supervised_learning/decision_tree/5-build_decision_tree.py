@@ -144,13 +144,60 @@ class Node:
         return details
 
     def update_indicator(self):
+        """
+        But :
+            Mettre à jour l'attribut `self.indicator` qui est une fonction
+            renvoyant un tableau booléen indiquant pour chaque individu
+            s'il appartient à la région définie par ce nœud (intersection
+            des contraintes `lower` et `upper`).
 
+        Contexte :
+            - Dans un arbre de décision, chaque feuille correspond à une
+            sous-région de l’espace des features.
+            - Les nœuds internes imposent des contraintes sur les features :
+                * lower[k] : valeur minimale (exclusif) pour la feature k
+                * upper[k] : valeur maximale (inclusif) pour la feature k
+            - L'indicator est la fonction caractéristique de la région
+            hyper-rectangulaire définie par ces bornes.
+
+        Fonctionnement :
+            1. is_large_enough(x) :
+                - Retourne True pour un individu si toutes les features
+                testées sont supérieures à leur borne inférieure.
+                - Si aucune borne inférieure, retourne True pour tous.
+
+            2. is_small_enough(x) :
+                - Retourne True pour un individu si toutes les features
+                testées sont inférieures ou égales à leur borne supérieure.
+                - Si aucune borne supérieure, retourne True pour tous.
+
+            3. Combinaison :
+                - self.indicator = lambda x: np.all([is_large_enough(x),
+                                                    is_small_enough(x)],
+                                                    axis=0)
+                - Renvoie True seulement si l'individu satisfait toutes les
+                contraintes de lower ET upper.
+
+        Exemple (2 features, 4 individus) :
+
+            A = np.array([[1,22000],
+                        [1,44000],
+                        [0,22000],
+                        [0,44000]])
+            lower = {0: 0.5}       # feature0 > 0.5
+            upper = {1: 30000}     # feature1 <= 30000
+
+            Résultat attendu :
+            Leaf0 (feature0 <= 0.5)          → [True, True, False, False]
+            Leaf1 (feature0 > 0.5, f1 <= 30000) → [False, False, True, False]
+            Leaf2 (feature0 > 0.5, f1 > 30000) → [False, False, False, True]
+        """
         def is_large_enough(x):
             if not self.lower:
                 return np.ones(x.shape[0], dtype=bool)
 
             for key in self.lower.keys():
-                conds = [np.greater(x[:, key], self.lower[key])]
+                conds = [x[:, key] <= self.upper[key]]
 
             return np.all(np.array(conds), axis=0)
 
