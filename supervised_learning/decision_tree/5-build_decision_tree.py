@@ -196,8 +196,7 @@ class Node:
             if not self.lower:
                 return np.ones(x.shape[0], dtype=bool)
 
-            for key in self.lower.keys():
-                conds = [x[:, key] <= self.upper[key]]
+            conds = [x[:, k] <= self.upper[k] for k in self.upper.keys()]
 
             return np.all(np.array(conds), axis=0)
 
@@ -205,8 +204,7 @@ class Node:
             if not self.upper:
                 return np.ones(x.shape[0], dtype=bool)
 
-            for key in self.upper.keys():
-                conds = [x[:, key] <= self.upper[key]]
+            conds = [x[:, k] > self.lower[k] for k in self.lower.keys()]
 
             return np.all(np.array(conds), axis=0)
 
