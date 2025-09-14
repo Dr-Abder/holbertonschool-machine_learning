@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-
+"""
+Calculae the normalization constants (mean and standard deviation)
+of a matrix
+"""
 
 import numpy as np
 
