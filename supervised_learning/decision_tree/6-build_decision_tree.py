@@ -271,7 +271,7 @@ class Leaf(Node):
     def update_bounds_below(self):
         """
         la fonction update_bounds_below s'applique que sur
-        les noeuds et non une feuille car elle n’a pas de 
+        les noeuds et non une feuille car elle n’a pas de
         descendants à qui transmettre.
         """
         pass
