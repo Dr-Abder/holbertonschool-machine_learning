@@ -390,6 +390,11 @@ class Decision_Tree():
         return self.root.pred(x)
 
     def fit(self, explanatory, target, verbose=0):
+        """
+        fit() :
+        entraîne l’arbre à partir des données (explanatory, target).
+        appelle récursivement fit_node() pour construire l’arbre.
+        """
         if self.split_criterion == "random":
             self.split_criterion = self.random_split_criterion
         else:
@@ -411,9 +416,17 @@ class Decision_Tree():
                                    self.target)}""")
 
     def np_extrema(self, arr):
+        """
+        Renvoie le minimum et le maximum d’un tableau arr.
+        """
         return np.min(arr), np.max(arr)
 
     def random_split_criterion(self, node):
+        """
+        Choisir aléatoirement une feature qui n’est pas constante.
+        Choisir un seuil aléatoire entre son min et son max.
+        Retourner (feature, threshold) pour couper le dataset en deux.
+        """
         diff = 0
         while diff == 0:
             feature = self.rng.integers(0, self.explanatory.shape[1])
@@ -425,6 +438,12 @@ class Decision_Tree():
         return feature, threshold
 
     def fit_node(self, node):
+        """
+        fit_node(node) :
+        choisit la feature et threshold du split.
+        divise la population en left_population et right_population.
+        crée soit une Leaf, soit un Node et continue récursivement.
+        """
         node.feature, node.threshold = self.split_criterion(node)
 
         left_population = (
@@ -462,6 +481,9 @@ class Decision_Tree():
             self.fit_node(node.right_child)
 
     def get_leaf_child(self, node, sub_population):
+        """
+        get_leaf_child() → crée une feuille (classe majoritaire).
+        """
         if sub_population.sum() == 0:
             values = self.target[node.sub_population]
         else:
@@ -475,12 +497,18 @@ class Decision_Tree():
         return leaf_child
 
     def get_node_child(self, node, sub_population):
+        """
+        get_node_child() → crée un nouveau nœud.
+        """
         n = Node()
         n.depth = node.depth + 1
         n.sub_population = sub_population
         return n
 
     def accuracy(self, test_explanatory, test_target):
+        """
+        accuracy() → calcule la précision.
+        """
         return (
             np.sum(np.equal(self.predict(test_explanatory), test_target)) /
             test_target.size
