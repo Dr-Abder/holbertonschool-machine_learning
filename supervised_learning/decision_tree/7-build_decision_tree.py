@@ -393,21 +393,22 @@ class Decision_Tree():
         if self.split_criterion == "random":
             self.split_criterion = self.random_split_criterion
         else:
-            self.split_criterion = self.Gini_split_criterion   # à définir plus tard
+            self.split_criterion = self.Gini_split_criterion
         self.explanatory = explanatory
         self.target = target
         self.root.sub_population = np.ones_like(self.target, dtype='bool')
 
-        self.fit_node(self.root)   # à définir plus tard
+        self.fit_node(self.root)
 
-        self.update_predict()      # déjà défini dans la tâche précédente
+        self.update_predict()
 
         if verbose == 1:
-                print(f"""  Training finished.
-    - Depth                     : { self.depth()       }
-    - Number of nodes           : { self.count_nodes() }
-    - Number of leaves          : { self.count_nodes(only_leaves=True) }
-    - Accuracy on training data : { self.accuracy(self.explanatory,self.target)    }""")   # à définir plus tard
+            print(f"""  Training finished.
+    - Depth                     : {self.depth()}
+    - Number of nodes           : {self.count_nodes}
+    - Number of leaves          : {self.count_nodes(only_leaves=True)}
+    - Accuracy on training data : {self.accuracy(self.explanatory,
+                                   self.target)}""")
 
     def np_extrema(self, arr):
         return np.min(arr), np.max(arr)
@@ -416,37 +417,51 @@ class Decision_Tree():
         diff = 0
         while diff == 0:
             feature = self.rng.integers(0, self.explanatory.shape[1])
-            feature_min, feature_max = self.np_extrema(self.explanatory[:, feature][node.sub_population])
+            sub_pop = self.explanatory[:, feature][node.sub_population]
+            feature_min, feature_max = self.np_extrema(sub_pop)
             diff = feature_max - feature_min
         x = self.rng.uniform()
         threshold = (1 - x) * feature_min + x * feature_max
         return feature, threshold
 
-    def fit_node(self,node) :
+    def fit_node(self, node):
         node.feature, node.threshold = self.split_criterion(node)
 
-        left_population  = node.sub_population & (self.explanatory [:, node.feature] > node.threshold)
-        right_population =  node.sub_population & (self.explanatory [:, node.feature] <= node.threshold)
+        left_population = (
+            node.sub_population &
+            (self.explanatory[:, node.feature] > node.threshold)
+        )
+        right_population = (
+            node.sub_population &
+            (self.explanatory[:, node.feature] <= node.threshold)
+        )
 
         # Is left node a leaf ?
-        is_left_leaf = (np.sum(left_population) < self.min_pop) or (node.depth + 1 >= self.max_depth) or (len(np.unique(self.target[left_population])) == 1)
-        if is_left_leaf :
-                node.left_child = self.get_leaf_child(node,left_population)                                                         
-        else :
-                node.left_child = self.get_node_child(node,left_population)
-                self.fit_node(node.left_child)
+        is_left_leaf = (
+            (np.sum(left_population) < self.min_pop) or
+            (node.depth + 1 >= self.max_depth) or
+            (len(np.unique(self.target[left_population])) == 1)
+        )
+
+        if is_left_leaf:
+            node.left_child = self.get_leaf_child(node, left_population)
+        else:
+            node.left_child = self.get_node_child(node, left_population)
+            self.fit_node(node.left_child)
 
         # Is right node a leaf ?
-        is_right_leaf = (np.sum(right_population) < self.min_pop) \
-                or (node.depth + 1 >= self.max_depth) \
-                or (len(np.unique(self.target[right_population])) == 1)
-        if is_right_leaf :
-                node.right_child = self.get_leaf_child(node,right_population)
-        else :
-                node.right_child = self.get_node_child(node,right_population)
-                self.fit_node(node.right_child)
+        is_right_leaf = (
+            (np.sum(right_population) < self.min_pop) or
+            (node.depth + 1 >= self.max_depth) or
+            (len(np.unique(self.target[right_population])) == 1)
+        )
+        if is_right_leaf:
+            node.right_child = self.get_leaf_child(node, right_population)
+        else:
+            node.right_child = self.get_node_child(node, right_population)
+            self.fit_node(node.right_child)
 
-    def get_leaf_child(self, node, sub_population) :        
+    def get_leaf_child(self, node, sub_population):
         if sub_population.sum() == 0:
             values = self.target[node.sub_population]
         else:
@@ -454,16 +469,19 @@ class Decision_Tree():
 
         value = np.bincount(values).argmax()
 
-        leaf_child= Leaf(value)
-        leaf_child.depth=node.depth+1
-        leaf_child.sub_population=sub_population
+        leaf_child = Leaf(value)
+        leaf_child.depth = node.depth + 1
+        leaf_child.sub_population = sub_population
         return leaf_child
 
-    def get_node_child(self, node, sub_population) :        
-        n= Node()
-        n.depth=node.depth+1
-        n.sub_population=sub_population
+    def get_node_child(self, node, sub_population):
+        n = Node()
+        n.depth = node.depth + 1
+        n.sub_population = sub_population
         return n
 
-    def accuracy(self, test_explanatory , test_target) :
-        return np.sum(np.equal(self.predict(test_explanatory), test_target))/test_target.size
+    def accuracy(self, test_explanatory, test_target):
+        return (
+            np.sum(np.equal(self.predict(test_explanatory), test_target)) /
+            test_target.size
+        )
