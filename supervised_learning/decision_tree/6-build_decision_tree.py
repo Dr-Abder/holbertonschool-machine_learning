@@ -221,6 +221,10 @@ class Node:
         return leaves_left + leaves_right
 
     def pred(self, x):
+        """
+        Sert vraiment à descendre récursivement dans l’arbre jusqu’à
+        tomber sur une feuille qui contient la valeur de prédiction finale.
+        """
         if x[self.feature] > self.threshold:
             return self.left_child.pred(x)
         else:
@@ -277,6 +281,9 @@ class Leaf(Node):
         pass
 
     def pred(self, x):
+        """
+        Retourne le résultat de la prédiction
+        """
         return self.value
 
 
@@ -377,4 +384,7 @@ class Decision_Tree():
         self.predict = predict_func
 
     def pred(self, x):
+        """
+        Retourne le résultat de la prédiction
+        """
         return self.root.pred(x)
