@@ -271,7 +271,8 @@ class Leaf(Node):
     def update_bounds_below(self):
         """
         la fonction update_bounds_below s'applique que sur
-        les noeuds et non les feuilles car elles ont pas de bornes
+        les noeuds et non une feuille car elle n’a pas de 
+        descendants à qui transmettre.
         """
         pass
 
@@ -338,6 +339,29 @@ class Decision_Tree():
         self.root.update_bounds_below()
 
     def update_predict(self):
+        """
+        Construit et met à jour la fonction de prédiction
+        vectorisée de l’arbre.
+
+        Étapes :
+        1. Met à jour les bornes (lower/upper) de toutes les feuilles
+           avec `update_bounds()`.
+        2. Récupère toutes les feuilles de l’arbre.
+        3. Pour chaque feuille, construit un indicateur booléen
+           (`leaf.indicator`) qui permet de savoir si un individu
+           appartient à la région de cette feuille.
+        4. Définit une fonction `predict_func(A)` qui :
+            - crée un tableau vide de prédictions
+            - pour chaque feuille, assigne `leaf.value` aux individus
+              détectés par `leaf.indicator(A)`
+            - renvoie le tableau final des prédictions
+        5. Associe cette fonction à `self.predict`.
+
+        Avantages :
+        - Contrairement à `pred(x)` qui prédit un seul individu
+          de manière récursive, `predict(A)` est vectorisée et
+          donc beaucoup plus efficace pour traiter de grandes matrices.
+        """
         self.update_bounds()
         leaves = self.get_leaves()
 
