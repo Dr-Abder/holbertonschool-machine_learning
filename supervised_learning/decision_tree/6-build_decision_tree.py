@@ -340,17 +340,17 @@ class Decision_Tree():
     def update_predict(self):
         self.update_bounds()
         leaves = self.get_leaves()
-        
+
         for leaf in leaves:
             leaf.update_indicator()
-        
+
         def predict_func(A):
             predictions = np.zeros(A.shape[0], dtype=int)
             for leaf in leaves:
                 predictions[leaf.indicator(A)] = leaf.value
             return predictions
-        
+
         self.predict = predict_func
 
-    def pred(self,x) :
-            return self.root.pred(x)
+    def pred(self, x):
+        return self.root.pred(x)
