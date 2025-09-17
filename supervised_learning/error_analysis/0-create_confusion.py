@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+Matrice de confusion pour visualiser les résultats
+d'un algorithme de classification.
+"""
 
 import numpy as np
 
