@@ -2,7 +2,25 @@
 
 import numpy as np
 
+
 def create_confusion_matrix(labels, logits):
+
+    """
+    Crée une matrice de confusion à partir
+    des étiquettes réelles et des prédictions.
+
+    Args:
+        labels (numpy.ndarray): Tableau 2D des étiquettes réelles
+                                encodées en one-hot
+                                (shape: [n_samples, n_classes]).
+        logits (numpy.ndarray): Tableau 2D des prédictions du modèle
+                                (shape: [n_samples, n_classes]).
+
+    Returns:
+        numpy.ndarray: Matrice de confusion de taille (n_classes, n_classes),
+                       où l’élément [i, j] correspond au nombre de fois où
+                       la classe i a été prédite comme j.
+    """
 
     classes = labels.shape[1]
 
