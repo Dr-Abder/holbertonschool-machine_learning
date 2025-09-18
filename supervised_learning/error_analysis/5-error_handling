@@ -2,33 +2,3 @@ A,B,D
 A,B,D
 B,C,E
 F
-"""
-DIAGNOSTIC BIAS-VARIANCE - Guide de survie
-
-🔍 DIAGNOSTIC :
-- High Bias = Underfitting (modèle trop simple)
-- High Variance = Overfitting (modèle trop complexe)
-
-💡 SOLUTIONS :
-
-Pour RÉDUIRE LE BIAS (underfitting) :
-├── A. Train more (plus d'époques)
-├── B. Try different architecture  
-└── D. Build deeper network
-
-Pour RÉDUIRE LA VARIANCE (overfitting) :
-├── C. Get more data
-└── E. Use regularization
-
-Solutions UNIVERSELLES :
-└── B. Try different architecture (peut tout résoudre)
-
-🎯 STRATÉGIE par scénario :
-1. High Bias + High Variance → B,C,E (architecture + données + régularisation)
-2. High Bias + Low Variance  → A,B,D (plus de puissance au modèle)
-3. Low Bias + High Variance  → C,E (réduire l'overfitting)  
-4. Low Bias + Low Variance   → F (modèle optimal, ne rien faire)
-
-⚠️ PIÈGE à éviter :
-Ne pas utiliser D (réseau plus profond) si déjà High Variance !
-"""
