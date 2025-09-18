@@ -36,6 +36,6 @@ def precision(confusion):
 
     for i in range(len(precision)):
         VP = confusion[i, i]
-        total_V = confusion[:, i].sum()
-        precision[i] = VP / total_V
+        total_VP_FP = confusion[:, i].sum()
+        precision[i] = VP / total_VP_FP
     return precision
