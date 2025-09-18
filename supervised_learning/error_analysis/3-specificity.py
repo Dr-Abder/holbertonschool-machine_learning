@@ -33,8 +33,8 @@ def specificity(confusion):
     specificity = np.zeros(classes)
 
     for i in range(classes):
-        VN = confusion.sum() - confusion[i, :].sum()
-        - confusion[:, i].sum() + confusion[i, i]
+        VN = (confusion.sum() - confusion[i, :].sum()
+              - confusion[:, i].sum() + confusion[i, i])
         FP = confusion[:, i].sum() - confusion[i, i]
         specificity[i] = VN / (VN + FP)
     return specificity
