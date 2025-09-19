@@ -16,6 +16,10 @@ def l2_reg_cost(cost, lambtha, weights, L, m):
     La régularisation L2 ajoute une pénalité proportionnelle à la somme
     des carrés des poids du réseau de neurones, afin de réduire le risque
     de surapprentissage.
+        Formule mathématique :
+
+    Formule mathématique :
+        J = cost + (λ / 2m) * Σ ||Wᵢ||²
 
     Args:
         cost (float): Coût initial (par exemple issu de l'entropie croisée).
