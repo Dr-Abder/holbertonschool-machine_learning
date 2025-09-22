@@ -36,7 +36,7 @@ def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
 
               dW = (1/m) * (dZ @ A^{[l-1]}^T) + (λ/m) * W^{[l]}
     """
-    
+
     m = Y.shape[1]
     A_prev = cache['A' + str(L - 1)]
     A_L = cache['A' + str(L)]
