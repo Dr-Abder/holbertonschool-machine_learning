@@ -24,7 +24,7 @@ def one_hot(Y, classes):
 
 m = np.random.randint(1000, 2000)
 c = 10
-lib= np.load('../data/MNIST.npz')
+lib= np.load('/workspaces/holbertonschool-machine_learning/supervised_learning/regularization/MNIST.npz')
 
 X = lib['X_train'][:m].reshape((m, -1))
 Y = one_hot(lib['Y_train'][:m], c)

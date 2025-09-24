@@ -32,7 +32,7 @@ def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
           pour les couches cachées.
         - Ajoute le terme de régularisation L2 au gradient :
 
-          .. math::
+          math:
 
               dW = (1/m) * (dZ @ A^{[l-1]}^T) + (λ/m) * W^{[l]}
     """
