@@ -5,7 +5,7 @@ d'un modèle TensorFlow en ajoutant la régularisation L2 au coût initial.
 Il est utile pour entraîner des réseaux de neurones tout en limitant
 le surapprentissage.
 """
-import numpy as np
+
 import tensorflow as tf
 
 
