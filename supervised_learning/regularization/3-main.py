@@ -23,7 +23,7 @@ def one_hot(Y, classes):
     one_hot[np.arange(m), Y] = 1
     return one_hot
 
-lib= np.load('../data/MNIST.npz')
+lib= np.load('/workspaces/holbertonschool-machine_learning/supervised_learning/regularization/MNIST.npz')
 X_train_3D = lib['X_train']
 Y_train = lib['Y_train']
 X_train = X_train_3D.reshape((X_train_3D.shape[0], -1))
@@ -31,7 +31,7 @@ Y_train_oh = one_hot(Y_train, 10)
 
 input_shape = X_train.shape[1]
 
-x = tf.keras.Input(shape=input_shape)
+x = tf.keras.Input(shape=(input_shape,))
 h1 = l2_reg_create_layer(x, 256, tf.nn.tanh, 0.05)  
 y_pred = l2_reg_create_layer(h1, 10, tf.nn.softmax, 0.)   
 model = tf.keras.Model(inputs=x, outputs=y_pred)
