@@ -31,22 +31,22 @@ def dropout_gradient_descent(Y, weights, cache, alpha, keep_prob, L):
         None: Les poids et biais sont mis à jour directement
               dans le dictionnaire `weights`.
     """
+
     m = Y.shape[1]
-    dZ = cache[f'A{L}'] - Y  # gradient sortie finale
+    dZ = cache[f'A{L}'] - Y
 
     for i in range(L, 0, -1):
-        A_prev = cache[f'A{i-1}'] if i > 1 else cache['A0']
-        n_l, n_prev = weights[f'W{i}'].shape
 
-        # Calcul du gradient
+        A_prev = cache[f'A{i-1}']
         dW = (1/m) * np.matmul(dZ, A_prev.T)
         db = (1/m) * np.sum(dZ, axis=1, keepdims=True)
 
-        # Mise à jour des poids
-        weights[f'W{i}'] -= alpha * dW
-        weights[f'b{i}'] -= alpha * db
-
         if i > 1:
             dA_prev = weights[f'W{i}'].T @ dZ
-            dA_prev = dA_prev * cache[f'D{i-1}'] / keep_prob  # Dropout
-            dZ = dA_prev * (1 - A_prev**2)  # dérivée tanh
+            dA_prev = dA_prev * cache[f'D{i-1}'] 
+            dA_prev =dA_prev / keep_prob
+            dZ = dA_prev * (1 - cache[f'A{i-1}']**2)
+
+        weights[f'W{i}'] = weights[f'W{i}'] - alpha * dW
+        weights[f'b{i}'] = weights[f'b{i}'] - alpha * db
+
