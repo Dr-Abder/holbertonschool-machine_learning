@@ -23,7 +23,7 @@ def early_stopping(cost, opt_cost, threshold, patience, count):
 
     Returns:
         tuple:
-            - stop (bool): True si l’entraînement doit être arrêté, sinon False.
+            - stop (bool): True si l’entraînement doit être arrêté sinon False.
             - count (int): Nouveau compteur mis à jour après cette itération.
 
     Notes:
