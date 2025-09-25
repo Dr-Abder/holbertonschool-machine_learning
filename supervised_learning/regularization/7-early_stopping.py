@@ -1,42 +1,43 @@
 #!/usr/bin/env python3
 """
-Ce module définit une fonction utilitaire pour créer une couche Dense
-TensorFlow/Keras avec régularisation Dropout. Elle permet de construire
-des réseaux de neurones robustes en désactivant aléatoirement certains
-neurones pendant l’entraînement pour limiter le surapprentissage.
+Ce module implémente la logique d’early stopping (arrêt anticipé)
+pour l’entraînement d’un modèle. Cette technique permet de stopper
+l’entraînement lorsque le coût ne s’améliore plus, afin de limiter
+le surapprentissage et de gagner du temps de calcul.
 """
 
-def dropout_create_layer(prev, n, activation, keep_prob, training=True):
+
+def early_stopping(cost, opt_cost, threshold, patience, count):
     """
-    Crée une couche Dense avec Dropout pour un réseau TensorFlow/Keras.
+    Détermine si l’entraînement doit être interrompu selon la stratégie
+    d’early stopping.
 
     Args:
-        prev (tf.Tensor): Entrée provenant de la couche précédente.
-        n (int): Nombre de neurones dans la couche.
-        activation (callable ou str): Fonction d’activation à appliquer.
-        keep_prob (float): Probabilité de conserver un neurone actif
-                           pendant le Dropout (0 < keep_prob ≤ 1).
-        training (bool): Indique si le Dropout est actif (True pendant
-                         l’entraînement, False en prédiction).
+        cost (float): Coût actuel du modèle (ex. perte sur validation).
+        opt_cost (float): Meilleur coût observé jusqu’à présent.
+        threshold (float): Seuil minimal de différence pour considérer
+                           une amélioration significative.
+        patience (int): Nombre maximal d’itérations consécutives sans
+                        amélioration avant d’arrêter l’entraînement.
+        count (int): Compteur d’itérations consécutives sans amélioration.
 
     Returns:
-        tf.Tensor: Sortie de la couche Dense après application du Dropout
-                   si `training=True`, sinon simple activation.
+        tuple:
+            - stop (bool): True si l’entraînement doit être arrêté, sinon False.
+            - count (int): Nouveau compteur mis à jour après cette itération.
+
+    Notes:
+        - Si `cost` s’améliore d’au moins `threshold` par rapport à
+          `opt_cost`, le compteur `count` est remis à zéro.
+        - Sinon, `count` est incrémenté. Si `count >= patience`,
+          l’entraînement est arrêté (stop=True).
     """
-    init_weights = tf.keras.initializers.VarianceScaling(
-        scale=2.0, mode="fan_avg"
-    )
+    if cost < opt_cost - threshold:
+        count = 0
+    else:
+        count += 1
 
-    layer = tf.keras.layers.Dense(
-        units=n,
-        activation=activation,
-        kernel_initializer=init_weights
-    )
-
-    output = layer(prev)
-
-    if training:
-        dropout = tf.keras.layers.Dropout(rate=(1 - keep_prob))
-        output = dropout(output, training=training)
-
-    return output
+    if count >= patience:
+        return True, count
+    else:
+        return False, count
