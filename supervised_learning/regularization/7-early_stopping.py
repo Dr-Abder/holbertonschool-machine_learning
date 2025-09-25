@@ -6,9 +6,6 @@ des réseaux de neurones robustes en désactivant aléatoirement certains
 neurones pendant l’entraînement pour limiter le surapprentissage.
 """
 
-import tensorflow as tf
-
-
 def dropout_create_layer(prev, n, activation, keep_prob, training=True):
     """
     Crée une couche Dense avec Dropout pour un réseau TensorFlow/Keras.
