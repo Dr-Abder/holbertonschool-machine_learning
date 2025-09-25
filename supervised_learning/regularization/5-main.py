@@ -13,7 +13,7 @@ def one_hot(Y, classes):
     return one_hot
 
 if __name__ == '__main__':
-    lib= np.load('../data/MNIST.npz')
+    lib= np.load('/workspaces/holbertonschool-machine_learning/supervised_learning/regularization/MNIST.npz')
     X_train_3D = lib['X_train']
     Y_train = lib['Y_train']
     X_train = X_train_3D.reshape((X_train_3D.shape[0], -1)).T
