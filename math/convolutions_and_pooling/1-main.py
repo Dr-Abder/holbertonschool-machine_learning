@@ -7,7 +7,7 @@ convolve_grayscale_same = __import__('1-convolve_grayscale_same').convolve_grays
 
 if __name__ == '__main__':
 
-    dataset = np.load('../../supervised_learning/data/MNIST.npz')
+    dataset = np.load('/workspaces/holbertonschool-machine_learning/data/MNIST.npz')
     images = dataset['X_train']
     print(images.shape)
     kernel = np.array([[1 ,0, -1], [1, 0, -1], [1, 0, -1]])
