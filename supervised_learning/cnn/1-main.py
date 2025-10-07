@@ -6,7 +6,7 @@ pool_forward = __import__('1-pool_forward').pool_forward
 
 if __name__ == "__main__":
     np.random.seed(0)
-    lib = np.load('../data/MNIST.npz')
+    lib = np.load('/workspaces/holbertonschool-machine_learning/data/MNIST.npz')
     X_train = lib['X_train']
     m, h, w = X_train.shape
     X_train_a = X_train.reshape((-1, h, w, 1))
