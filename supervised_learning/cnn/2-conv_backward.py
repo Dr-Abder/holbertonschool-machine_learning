@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """
-Convolution Back Propagation
+Effectue la rétropropagation du gradient à travers une couche de convolution.
+
+Cette fonction calcule les gradients des entrées, des poids et des biais
+d'une couche de convolution, à partir du gradient d’erreur `dZ` reçu
+de la couche suivante lors de la rétropropagation.
 """
 
 import numpy as np
@@ -8,80 +12,78 @@ import numpy as np
 
 def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
     """
-    Performs back propagation over a convolutional layer of a neural network
+    Calcule la rétropropagation à travers une couche de convolution.
 
-    Parameters:
-    - dZ (numpy.ndarray): shape (m, h_new, w_new, c_new) partial derivatives
-    with respect to the unactivated output of the convolutional layer
-    - A_prev (numpy.ndarray): shape (m, h_prev, w_prev, c_prev) output of
-    the previous layer
-    - W (numpy.ndarray): shape (kh, kw, c_prev, c_new) kernels
-    for the convolution
-    - b (numpy.ndarray): shape (1, 1, 1, c_new) biases applied
-    to the convolution
-    - padding (str): 'same' or 'valid', indicating the type of padding used
-    - stride (tuple): (sh, sw) containing the strides for the convolution
+    Parameters
+    ----------
+    dZ : np.ndarray
+        Gradient du coût par rapport à la sortie (m, h_new, w_new, c_new)
+    A_prev : np.ndarray
+        Entrée de la couche précédente (m, h_prev, w_prev, c_prev)
+    W : np.ndarray
+        Filtres de convolution (kh, kw, c_prev, c_new)
+    b : np.ndarray
+        Biais (1, 1, 1, c_new)
+    padding : str, optional
+        'same' ou 'valid' (par défaut 'same')
+    stride : tuple, optional
+        Pas de déplacement (par défaut (1, 1))
 
-    Returns:
-    - dA_prev (numpy.ndarray): partial derivatives with respect to the
-    previous layer
-    - dW (numpy.ndarray): partial derivatives with respect to the kernels
-    - db (numpy.ndarray): partial derivatives with respect to the biases
+    Returns
+    -------
+    dA_prev : np.ndarray
+        Gradient par rapport à l'entrée
+    dW : np.ndarray
+        Gradient par rapport aux poids
+    db : np.ndarray
+        Gradient par rapport aux biais
     """
-
-    # Extract dimensions from the input shapes
-    _, h_new, w_new, c_new = dZ.shape
+    m, h_new, w_new, c_new = dZ.shape
     m, h_prev, w_prev, c_prev = A_prev.shape
-    kh, kw, _, _ = W.shape
+    kh, kw, c_prev, _ = W.shape
     sh, sw = stride
 
-    # Determine padding size
-    if padding == 'valid':
-        # No padding
-        ph, pw = 0, 0
-    elif padding == 'same':
-        # Calculate padding to keep the output size same as input
-        ph = int((((h_prev - 1) * sh + kh - h_prev) / 2 + 0.5))
-        pw = int((((w_prev - 1) * sw + kw - w_prev) / 2 + 0.5))
-
-    # Apply padding to A_prev
-    A_prev_pad = np.pad(A_prev,
-                        [(0, 0), (ph, ph), (pw, pw), (0, 0)],
-                        mode='constant')
-
-    # Calculate the bias gradient
+    dA_prev = np.zeros_like(A_prev)
+    dW = np.zeros_like(W)
     db = np.sum(dZ, axis=(0, 1, 2), keepdims=True)
 
-    # Initialize gradients for dA_pad and dW
-    dA_pad = np.zeros(shape=A_prev_pad.shape)
-    dW = np.zeros(shape=W.shape)
+    if padding == "valid":
+        ph = pw = 0
+    elif padding == "same":
+        ph = (kh - 1) // 2
+        pw = (kw - 1) // 2
 
-    # Loop over every example in the batch
-    for i in range(m):
-        for h in range(h_new):
-            for w in range(w_new):
-                # Loop over every filter
-                for f in range(c_new):
-                    # Define the slice boundaries
-                    v_start = h * sh
-                    v_end = v_start + kh
-                    h_start = w * sw
-                    h_end = h_start + kw
+    A_prev_padded = np.pad(
+        A_prev,
+        pad_width=((0, 0), (ph, ph), (pw, pw), (0, 0)),
+        mode='constant',
+        constant_values=0
+    )
 
-                    # Update the gradient for the padded input
-                    dA_pad[i, v_start:v_end, h_start:h_end, :] += (
-                            W[:, :, :, f] * dZ[i, h, w, f]
-                            )
-                    # Update the gradient for the filter weights
-                    dW[:, :, :, f] += (
-                            A_prev_pad[i, v_start:v_end, h_start:h_end, :] *
-                            dZ[i, h, w, f]
-                            )
+    dA_prev_padded = np.pad(
+        dA_prev,
+        pad_width=((0, 0), (ph, ph), (pw, pw), (0, 0)),
+        mode='constant',
+        constant_values=0
+    )
 
-    # Remove padding from the gradient if necessary
+    for i in range(h_new):
+        for j in range(w_new):
+            for k in range(c_new):
+                region = A_prev_padded[:, i*sh:i*sh+kh, j*sw:j*sw+kw, :]
+
+                dZ_slice = dZ[:, i, j, k][:, np.newaxis,
+                                          np.newaxis, np.newaxis]
+
+                dW[:, :, :, k] += (region * dZ_slice).sum(axis=0)
+
+                W_slice = W[:, :, :, k]
+                dA_prev_padded[:, i*sh:i*sh+kh, j*sw:j*sw+kw,
+                               :] += W_slice * dZ_slice
+
     if padding == "same":
-        dA = dA_pad[:, ph:-ph, pw:-pw, :]
+        dA_prev = dA_prev_padded[:, ph:ph+h_prev, pw:pw+w_prev, :]
     else:
-        dA = dA_pad
+        dA_prev = dA_prev_padded
 
-    return dA, dW, db
+    return dA_prev, dW, db
