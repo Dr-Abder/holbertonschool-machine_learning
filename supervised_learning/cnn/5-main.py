@@ -17,7 +17,7 @@ tf.random.set_seed(SEED)
 lenet5 = __import__('5-lenet5').lenet5
 
 if __name__ == "__main__":
-    lib = np.load('../data/MNIST.npz')
+    lib = np.load('/workspaces/holbertonschool-machine_learning/data/MNIST.npz')
     X_train = lib['X_train']
     m, h, w = X_train.shape
     X_train_c = X_train.reshape((-1, h, w, 1))

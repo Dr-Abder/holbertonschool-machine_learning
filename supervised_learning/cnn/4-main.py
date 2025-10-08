@@ -18,7 +18,7 @@ if __name__ == "__main__":
     tf.set_random_seed(SEED)
     np.random.seed(SEED)
 
-    lib = np.load('../data/MNIST.npz')
+    lib = np.load('/workspaces/holbertonschool-machine_learning/data/MNIST.npz')
     X_train = lib['X_train']
     Y_train = lib['Y_train']
     X_valid = lib['X_valid']
