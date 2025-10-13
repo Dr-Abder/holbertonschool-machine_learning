@@ -1,77 +1,69 @@
 #!/usr/bin/env python3
 """
-Projection Block
+Module implémentant un bloc de projection (projection block) pour
+un réseau résiduel (ResNet) utilisant TensorFlow et Keras.
+
+Ce bloc est une variante du bloc d'identité utilisée lorsque les
+dimensions du tenseur d'entrée et de sortie diffèrent. Il introduit
+une projection par convolution 1x1 dans le chemin de raccourci
+(shortcut) afin d'adapter la taille et le nombre de canaux avant
+l'addition résiduelle.
 """
 
 from tensorflow import keras as K
-
-
-def projection_block(A_prev, filters, s=2):
     """
-    Builds a projection block as described in
-    'Deep Residual Learning for Image Recognition' (2015).
+    Construit un bloc de projection pour un réseau résiduel (ResNet).
 
-    Parameters:
-    A_prev : tensor
-        The output of the previous layer.
-    filters : tuple or list
-        Contains F11, F3, F12 respectively:
-            F11 : int
-                Number of filters in the first 1x1 convolution.
-            F3 : int
-                Number of filters in the 3x3 convolution.
-            F12 : int
-                Number of filters in the second 1x1 convolution as well
-                as the 1x1 convolution in the shortcut connection.
-    s : int
-        Stride of the first convolution in both the main path and the shortcut
-        connection.
+    Le bloc applique trois convolutions (1x1, 3x3, 1x1) avec des
+    normalisations par batch et des activations ReLU. En parallèle,
+    une convolution 1x1 (chemin de raccourci) projette l'entrée pour
+    correspondre à la dimension de sortie avant l'addition résiduelle.
+
+    Args:
+        A_prev (keras.Tensor): tenseur d'entrée du bloc, de forme
+            (batch_size, height, width, channels).
+        filters (tuple or list): contient les dimensions des filtres
+            pour chaque couche convolutive, dans l’ordre :
+            (F11, F3, F12), où :
+                - F11 : filtres de la première convolution 1x1
+                - F3  : filtres de la convolution 3x3
+                - F12 : filtres de la dernière convolution 1x1
+        s (int, optional): facteur de stride pour la première
+            convolution et la projection du raccourci. Défaut à 2.
 
     Returns:
-    tensor
-        The activated output of the projection block.
-    """
-    F11, F3, F12 = filters
+        keras.Tensor: tenseur résultant après la connexion résiduelle
+        et la dernière activation ReLU.
 
-    # Initializer he_normal with seed 0
+    Exemple:
+        >> output = projection_block(A_prev, (64, 64, 256), s=2)
+        >> print(output.shape)
+    """
+
+def projection_block(A_prev, filters, s=2):
+
+
+    F11, F3, F12 = filters
     init = K.initializers.HeNormal(seed=0)
 
-    # First layer of main path
-    conv1 = K.layers.Conv2D(filters=F11,
-                            kernel_size=(1, 1),
-                            strides=(s, s),
-                            padding="same",
-                            kernel_initializer=init)(A_prev)
-    norm1 = K.layers.BatchNormalization(axis=-1)(conv1)
-    relu1 = K.layers.Activation(activation="relu")(norm1)
+    conv1 = K.layers.Conv2D(F11, (1, 1), strides=(s, s),
+                    padding='same', kernel_initializer=init)(A_prev)
+    norm1 = K.layers.BatchNormalization(axis=3)(conv1)
+    relu1 = K.layers.Activation("relu")(norm1)
 
-    # Second layer of main path
-    conv2 = K.layers.Conv2D(filters=F3,
-                            kernel_size=(3, 3),
-                            strides=(1, 1),
-                            padding="same",
-                            kernel_initializer=init)(relu1)
-    norm2 = K.layers.BatchNormalization(axis=-1)(conv2)
-    relu2 = K.layers.Activation(activation="relu")(norm2)
+    conv2 = K.layers.Conv2D(F3, (3, 3), (1, 1),
+                    padding='same', kernel_initializer=init)(relu1)
+    norm2 = K.layers.BatchNormalization(axis=3)(conv2)
+    relu2 = K.layers.Activation("relu")(norm2)
 
-    # Final layer of main path
-    conv3 = K.layers.Conv2D(filters=F12,
-                            kernel_size=(1, 1),
-                            strides=(1, 1),
-                            padding="same",
-                            kernel_initializer=init)(relu2)
-    norm3 = K.layers.BatchNormalization(axis=-1)(conv3)
+    conv3 = K.layers.Conv2D(F12, (1, 1), (1, 1),
+                    padding='same', kernel_initializer=init)(relu2)
+    norm3 = K.layers.BatchNormalization(axis=3)(conv3)
 
-    # Shortcut path
-    conv_shortcut = K.layers.Conv2D(filters=F12,
-                                    kernel_size=(1, 1),
-                                    strides=(s, s),
-                                    padding="same",
-                                    kernel_initializer=init)(A_prev)
-    norm_shortcut = K.layers.BatchNormalization(axis=-1)(conv_shortcut)
 
-    # Merge output of main path and shortcut path
-    merged = K.layers.Add()([norm3, norm_shortcut])
+    conv_shortcut = K.layers.Conv2D(F12, (1, 1), strides=(s, s),
+                    padding='same', kernel_initializer=init)(A_prev)
+    norm_shortcut = K.layers.BatchNormalization(axis=3)(conv_shortcut)
+    shortcut = K.layers.Add()([norm3, norm_shortcut])
 
-    # Return activated output of merge, using ReLU.
-    return K.layers.Activation(activation="relu")(merged)
+    return K.layers.Activation("relu")(shortcut)
