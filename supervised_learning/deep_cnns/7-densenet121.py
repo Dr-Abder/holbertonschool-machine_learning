@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """
-DenseNet-121 Implementation
+Module implémentant DenseNet-121 en utilisant TensorFlow Keras.
+
+Ce module définit la fonction densenet121, qui construit le modèle
+DenseNet-121 complet pour des images 224x224x3. Le réseau est composé
+de blocs denses et de couches de transition pour réduire la taille
+des cartes de caractéristiques et le nombre de filtres, suivi d'une
+classification softmax sur 1000 classes.
 """
 
 from tensorflow import keras as K
@@ -9,64 +15,50 @@ transition_layer = __import__('6-transition_layer').transition_layer
 
 
 def densenet121(growth_rate=32, compression=1.0):
+
     """
-    Builds the DenseNet-121 architecture as described in
-    'Densely Connected Convolutional Networks'.
+Construit le modèle DenseNet-121.
 
-    Parameters:
-    growth_rate (int): The growth rate for the dense blocks.
-    compression (float): The compression factor for the transition layers.
+Le réseau est composé de :
+- Une couche d'entrée 224x224x3
+- Une convolution initiale 7x7 suivie d'un max pooling
+- 4 blocs denses séparés par 3 couches de transition
+- Une pooling global moyen 7x7
+- Une couche Dense softmax pour 1000 classes
 
-    Returns:
-    keras.Model: The Keras model representing DenseNet-121.
-    """
-    # Define the input layer with the specified shape
-    input_0 = K.Input(shape=(224, 224, 3))
+Args:
+growth_rate (int): nombre de filtres ajoutés par couche
+        dans chaque bloc dense.
+compression (float): facteur de réduction du nombre de filtres
+        dans chaque couche de transition (0 < compression <= 1).
 
-    # Initial batch normalization and ReLU activation
-    BN_0 = K.layers.BatchNormalization()(input_0)
-    ReLU_0 = K.layers.Activation(activation='relu')(BN_0)
+Returns:
+keras.Model: modèle Keras DenseNet-121 prêt à l'entraînement.
+"""
 
-    # Initial convolution with 64 filters, 7x7 kernel size, and stride of 2
-    conv_0 = K.layers.Conv2D(
-            filters=64,
-            kernel_size=(7, 7),
-            strides=(2, 2),
-            kernel_initializer=K.initializers.he_normal(seed=0),
-            padding="same")(ReLU_0)
 
-    # Max pooling with 3x3 pool size and stride of 2
-    pool_0 = K.layers.MaxPooling2D(pool_size=(3, 3),
-                                   strides=2,
-                                   padding="same")(conv_0)
+init = K.initializers.HeNormal(seed=0)
 
-    # First dense block with 6 layers
-    out_1, nb = dense_block(pool_0, pool_0.shape[3], growth_rate, 6)
-    # First transition layer
-    trans_1, nb = transition_layer(out_1, nb, compression)
+X_input = K.Input(shape=(224, 224, 3))
 
-    # Second dense block with 12 layers
-    out_2, nb = dense_block(trans_1, trans_1.shape[3], growth_rate, 12)
-    # Second transition layer
-    trans_2, nb = transition_layer(out_2, nb, compression)
+BN1 = K.layers.BatchNormalization(axis=3)(X_input)
+RL1 = K.layers.Activation('relu')(BN1)
+CNV1 = K.layers.Conv2D(growth_rate*2, (7, 7), (2, 2), padding='same',
+                       kernel_initializer=init)(RL1)
+MAXP1 = K.layers.MaxPooling2D((3, 3), strides=(2, 2), padding='same')(CNV1)
 
-    # Third dense block with 24 layers
-    out_3, nb = dense_block(trans_2, trans_2.shape[3], growth_rate, 24)
-    # Third transition layer
-    trans_3, nb = transition_layer(out_3, nb, compression)
+out_1, nb = dense_block(MAXP1, 64, growth_rate, 6)
+trans_1, nb = transition_layer(out_1, nb, compression)
 
-    # Fourth dense block with 16 layers.
-    out_4, nb = dense_block(trans_3, trans_3.shape[3], growth_rate, 16)
+out_2, nb = dense_block(trans_1, nb, growth_rate, 12)
+trans_2, nb = transition_layer(out_2, nb, compression)
 
-    # Global average pooling layer
-    avg_pooling = K.layers.AveragePooling2D(pool_size=(7, 7),
-                                            padding="same")(out_4)
+out_3, nb = dense_block(trans_2, nb, growth_rate, 24)
+trans_3, nb = transition_layer(out_3, nb, compression)
 
-    # Fully connected layer with 1000 units and softmax
-    # activation for classification
-    dense = K.layers.Dense(units=1000,
-                           activation='softmax')(avg_pooling)
+out_4, nb = dense_block(trans_3, nb, growth_rate, 16)
 
-    # Create the Keras model
-    model = K.Model(input_0, dense)
-    return model
+AVG = K.layers.AveragePooling2D(pool_size=7)(out_4)
+X = K.layers.Dense(1000, activation='softmax')(AVG)
+
+return K.models.Model(inputs=X_input, outputs=X)
