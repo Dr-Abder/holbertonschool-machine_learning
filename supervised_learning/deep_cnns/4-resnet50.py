@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
+"""
+Module implémentant l’architecture ResNet-50 à l’aide de TensorFlow
+et Keras.
 
+ResNet-50 (Residual Network) est un réseau de neurones convolutif
+profond utilisant des connexions résiduelles (skip connections) pour
+faciliter l’apprentissage de très grandes profondeurs. Ce module
+assemble des blocs de projection et d’identité afin de construire
+l’architecture complète du modèle ResNet-50.
+"""
 
 from tensorflow import keras as K
 identity_block = __import__('2-identity_block').identity_block
@@ -7,7 +16,35 @@ projection_block = __import__('3-projection_block').projection_block
 
 
 def resnet50():
-    
+
+    """
+    Construit le modèle complet ResNet-50 en Keras.
+
+    Le modèle est constitué d’une première couche de convolution
+    suivie de cinq ensembles de blocs résiduels. Chaque ensemble
+    contient un bloc de projection (pour ajuster la dimension) suivi
+    de plusieurs blocs d’identité. Cette structure permet de propager
+    efficacement le gradient et d’entraîner un réseau très profond.
+
+    L’architecture finale comprend :
+        - une entrée d’images RGB de taille (224, 224, 3)
+        - 1 couche de convolution initiale (7x7)
+        - 5 ensembles de blocs résiduels :
+            * Conv2_x : 1 bloc de projection + 2 blocs d’identité
+            * Conv3_x : 1 bloc de projection + 3 blocs d’identité
+            * Conv4_x : 1 bloc de projection + 5 blocs d’identité
+            * Conv5_x : 1 bloc de projection + 2 blocs d’identité
+        - un pooling global moyen (7x7)
+        - une couche dense softmax pour 1000 classes (ImageNet)
+
+    Returns:
+        keras.Model: le modèle Keras correspondant à l’architecture
+        complète du réseau ResNet-50.
+
+    Exemple:
+        >> model = resnet50()
+        >> model.summary()
+    """
     init = K.initializers.HeNormal(seed=0)
     X_input = K.Input(shape=(224, 224, 3))
 
