@@ -67,13 +67,23 @@ if __name__ == '__main__':
     # On gèle les poids pour l'entraînement initial
     base_model.trainable = False
 
+    data_augmentation = K.Sequential([
+        K.layers.RandomFlip("horizontal"),   # flip horizontal aléatoire
+        K.layers.RandomRotation(0.1),       # rotation légère
+        K.layers.RandomZoom(0.1),            # zoom aléatoire
+        K.layers.RandomContrast(0.1)
+    ])
+
     # Création de l'input layer du modèle
     inputs = K.Input(shape=(32, 32, 3))
-    X = R_layer(inputs)      # Redimensionnement
+    X = data_augmentation(inputs)  # appliquer l'augmentation
+    X = R_layer(X)      # Redimensionnement
     X = base_model(X)        # Passage par la base MobileNetV2
 
     # Pooling global et couche de sortie
     X = K.layers.GlobalAveragePooling2D()(X)
+    X = Dense(256, activation='relu')(X)
+    X = K.layers.Dropout(0.3)(X)  # régularisation
     X = Dense(10, activation='softmax')(X)
 
     # Création du modèle final
@@ -86,22 +96,36 @@ if __name__ == '__main__':
         metrics=['accuracy']
     )
 
+    callbacks = [
+        K.callbacks.EarlyStopping(
+            monitor='val_loss',  # surveille la perte sur validation
+            patience=3,          # stop si aucune amélioration après 3 epochs
+            restore_best_weights=True  # restaurer le meilleur modèle
+        ),
+        K.callbacks.ModelCheckpoint(
+            "best_model.h5",     # fichier où sauvegarder
+            monitor='val_loss',
+            save_best_only=True
+        )
+    ]
+
     # Entraînement initial avec base gelée
     model.fit(
         X_train, Y_train,
         validation_data=(X_test, Y_test),
-        batch_size=16,
-        epochs=10
+        batch_size=64,
+        epochs=15,
+        callbacks=callbacks
     )
 
     # Déblocage partiel de la base pour fine-tuning
     base_model.trainable = True
-    for layer in base_model.layers[:100]:
+    for layer in base_model.layers[:125]:
         layer.trainable = False
 
     # Compilation pour le fine-tuning avec un learning rate réduit
     model.compile(
-        optimizer=K.optimizers.Adam(learning_rate=0.0001),
+        optimizer=K.optimizers.Adam(learning_rate=1e-4),
         loss='categorical_crossentropy',
         metrics=['accuracy']
     )
@@ -110,8 +134,9 @@ if __name__ == '__main__':
     model.fit(
         X_train, Y_train,
         validation_data=(X_test, Y_test),
-        batch_size=16,
-        epochs=10
+        batch_size=64,
+        epochs=15,
+        callbacks=callbacks
     )
 
     # Sauvegarde du modèle final

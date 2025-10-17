@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 
+import tensorflow as tf  # ← AJOUTE CETTE LIGNE
 from tensorflow import keras as K
+
+# Rendre tf accessible globalement pour la lambda
+import builtins  # ← AJOUTE CETTE LIGNE
+builtins.tf = tf  # ← AJOUTE CETTE LIGNE
+
 preprocess_data = __import__('0-transfer').preprocess_data
 
 # to fix issue with saving keras applications
-# K.learning_phase = K.backend.learning_phase 
+if not hasattr(K.backend, 'learning_phase'):
+    K.backend.learning_phase = lambda: False
 
 _, (X, Y) = K.datasets.cifar10.load_data()
 X_p, Y_p = preprocess_data(X, Y)
-model = K.models.load_model('cifar10.h5', safe_mode=False)  # ← Ajoute safe_mode=False
+model = K.models.load_model('cifar10.h5', safe_mode=False)  # ← AJOUTE safe_mode=False
 model.evaluate(X_p, Y_p, batch_size=128, verbose=1)
