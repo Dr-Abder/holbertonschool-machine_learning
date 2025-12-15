@@ -21,4 +21,5 @@ if __name__ == "__main__":
     plt.xlabel('Clusters')
     plt.ylabel('Delta Variance')
     plt.title('Optimizing K-means')
+    plt.savefig('clusters-3')
     plt.show()
