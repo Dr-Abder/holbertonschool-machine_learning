@@ -34,6 +34,7 @@ def kmeans(X, k, iterations=1000):
                 C[j] = np.mean(points_in_cluster, axis=0)
 
         if np.array_equal(old_C, C):
+            print(f"Convergence atteinte à l'itération {i+1}")
             break
 
         distances = np.linalg.norm(X[:, np.newaxis] - C, axis=2)
