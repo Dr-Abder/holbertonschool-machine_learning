@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Module to let the trained agent play an episode on FrozenLake.
+Module permettant à l’agent entraîné de jouer un épisode sur FrozenLake.
 """
 
 import numpy as np
@@ -8,33 +8,33 @@ import numpy as np
 
 def play(env, Q, max_steps=100):
     """
-    Plays an episode using the trained Q-table.
+    Joue un épisode en utilisant la Q-table entraînée.
     """
     state = env.reset()[0]
     rendered_outputs = []
     total_rewards = 0
 
     for _ in range(max_steps):
-        # Render and capture the current state of the environment
+        # Afficher et capturer l'état actuel de l'environnement
         rendered_outputs.append(env.render())
 
-        # Choose the best action (exploit Q-table)
+        # Choisir la meilleure action (exploitation de la Q-table)
         action = np.argmax(Q[state])
 
-        # Perform the action
+        # Exécuter l'action
         next_state, reward, done, _, _ = env.step(action)
 
-        # Update total rewards
+        # Mettre à jour la récompense totale
         total_rewards += reward
 
-        # Transition to the next state
+        # Passer à l'état suivant
         state = next_state
 
-        # End the episode if done
+        # Terminer l'épisode si c'est fini
         if done:
             break
 
-    # Ensure the final state is also rendered after the episode concludes
+    # S'assurer que l'état final est également affiché après la fin de l'épisode
     rendered_outputs.append(env.render())
 
     return total_rewards, rendered_outputs
