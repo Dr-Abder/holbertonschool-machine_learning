@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 train.py
-Trains a Deep Q-Network (DQN) agent on Atari's Breakout using keras-rl2 and Gymnasium.
-The trained policy is saved as 'policy.h5'.
+Entraîne un agent Deep Q-Network (DQN) sur Breakout d’Atari en utilisant keras-rl2 et Gymnasium.
+La politique entraînée est sauvegardée sous le nom 'policy.h5'.
 """
 
 import gymnasium as gym
@@ -17,21 +17,21 @@ from rl.policy import EpsGreedyQPolicy
 
 class CompatibilityWrapper(gym.Wrapper):
     """
-    A wrapper to adjust the environment for compatibility with keras-rl2.
-    Ensures the environment returns the expected outputs and handles episode
-    termination flags as required by keras-rl2.
+    Un wrapper pour adapter l’environnement afin qu’il soit compatible avec keras-rl2.
+    S’assure que l’environnement retourne les sorties attendues et gère les
+    indicateurs de fin d’épisode conformément aux exigences de keras-rl2.
     """
 
     def step(self, action):
         """
-        Takes a step in the environment with the given action.
+        Effectue une étape dans l’environnement avec l’action donnée.
 
-        :param action: The action to take in the environment.
-        :return: Tuple of (observation, reward, done, info)
-                 - observation: the resulting observation
-                 - reward: the reward received from this step
-                 - done: whether the episode has terminated
-                 - info: additional information about the step
+        :param action: L’action à effectuer dans l’environnement.
+        :return: Tuple (observation, reward, done, info)
+                 - observation : l’observation résultante
+                 - reward : la récompense reçue pour cette étape
+                 - done : indique si l’épisode est terminé
+                 - info : informations supplémentaires concernant l’étape
         """
         observation, reward, terminated, truncated, info = self.env.step(action)
         done = terminated or truncated
@@ -39,20 +39,20 @@ class CompatibilityWrapper(gym.Wrapper):
 
     def reset(self, **kwargs):
         """
-        Resets the environment and returns the initial observation.
+        Réinitialise l’environnement et retourne l’observation initiale.
 
-        :param kwargs: additional arguments for resetting the environment
-        :return: initial observation
+        :param kwargs: arguments supplémentaires pour la réinitialisation de l’environnement
+        :return: observation initiale
         """
         observation, info = self.env.reset(**kwargs)
         return observation
 
 def create_atari_environment(env_name):
     """
-    Initializes and configures an Atari environment for training.
+    Initialise et configure un environnement Atari pour l’entraînement.
 
-    :param env_name: str, the name of the Atari environment to initialize
-    :return: gym.Env object configured for Atari gameplay
+    :param env_name: str, le nom de l’environnement Atari à initialiser
+    :return: objet gym.Env configuré pour le jeu Atari
     """
     env = gym.make(env_name, render_mode='rgb_array')
     env = gym.wrappers.AtariPreprocessing(env, screen_size=84, grayscale_obs=True, frame_skip=1, noop_max=30)
@@ -62,63 +62,62 @@ def create_atari_environment(env_name):
 
 def build_model(window_length, shape, actions):
     """
-    Constructs a Convolutional Neural Network (CNN) model for DQN learning.
+    Construit un modèle de Réseau de Neurones Convolutif (CNN) pour l’apprentissage DQN.
 
-    :param window_length: int, number of frames stacked together as input to represent motion
-    :param shape: tuple, the shape of individual frames (height, width, channels)
-    :param actions: int, the number of possible actions in the environment
-    :return: Sequential keras model ready for DQN training
+    :param window_length: int, nombre d’images empilées en entrée pour représenter le mouvement
+    :param shape: tuple, la forme des images individuelles (hauteur, largeur, canaux)
+    :param actions: int, le nombre d’actions possibles dans l’environnement
+    :return: modèle keras Sequential prêt pour l’entraînement DQN
     """
     model = Sequential()
-    # Reorder input dimensions to fit keras-rl2 requirements
+    # Réorganiser les dimensions d’entrée pour respecter les exigences de keras-rl2
     model.add(Permute((2, 3, 1), input_shape=(window_length,) + shape))
-    # First convolutional layer to capture spatial patterns
+    # Première couche convolutionnelle pour capturer les motifs spatiaux
     model.add(Conv2D(32, (8, 8), strides=(4, 4), activation='relu'))
-    # Second convolutional layer for deeper pattern recognition
+    # Deuxième couche convolutionnelle pour une reconnaissance plus profonde des motifs
     model.add(Conv2D(64, (4, 4), strides=(2, 2), activation='relu'))
-    # Third convolutional layer to refine spatial features
+    # Troisième couche convolutionnelle pour affiner les caractéristiques spatiales
     model.add(Conv2D(64, (3, 3), strides=(1, 1), activation='relu'))
-    # Flatten the feature maps into a single vector
+    # Aplatir les cartes de caractéristiques en un seul vecteur
     model.add(Flatten())
-    # Fully connected layer to process combined features
+    # Couche entièrement connectée pour traiter les caractéristiques combinées
     model.add(Dense(512, activation='relu'))
-    # Output layer with linear activation to predict Q-values for each action
+    # Couche de sortie avec activation linéaire pour prédire les valeurs Q de chaque action
     model.add(Dense(actions, activation='linear'))
     return model
 
-# DQN Agent Setup
+# Configuration de l’agent DQN
 
 if __name__ == "__main__":
-    # Initialize the environment
+    # Initialiser l’environnement
     env = create_atari_environment('ALE/Breakout-v5')
-    nb_actions = env.action_space.n  # Number of possible actions in Breakout
+    nb_actions = env.action_space.n  # Nombre d’actions possibles dans Breakout
 
-    # Build and configure the model
-    window_length = 4  # Number of consecutive frames to form an observation
+    # Construire et configurer le modèle
+    window_length = 4  # Nombre d’images consécutives pour former une observation
     model = build_model(window_length, env.observation_space.shape, nb_actions)
 
-    # Define the DQN agent with a policy and memory buffer
-    memory = SequentialMemory(limit=1000000, window_length=window_length)  # Replay buffer to store past experiences
-    policy = EpsGreedyQPolicy()  # Epsilon-greedy policy for exploration-exploitation balance
+    # Définir l’agent DQN avec une politique et un buffer mémoire
+    memory = SequentialMemory(limit=1000000, window_length=window_length)  # Mémoire de relecture pour stocker les expériences passées
+    policy = EpsGreedyQPolicy()  # Politique epsilon-greedy pour équilibrer exploration et exploitation
     dqn = DQNAgent(
         model=model,
         nb_actions=nb_actions,
         policy=policy,
         memory=memory,
-        nb_steps_warmup=50000,  # Steps before training begins to populate memory
-        gamma=0.99,  # Discount factor for future rewards
-        target_model_update=10000,  # Interval for updating target network weights
-        train_interval=4,  # Frequency of training updates
-        delta_clip=1.0  # Clip error term for stability
+        nb_steps_warmup=50000,  # Nombre d’étapes avant le début de l’entraînement pour remplir la mémoire
+        gamma=0.99,  # Facteur d’actualisation des récompenses futures
+        target_model_update=10000,  # Intervalle de mise à jour des poids du réseau cible
+        train_interval=4,  # Fréquence des mises à jour de l’entraînement
+        delta_clip=1.0  # Limitation du terme d’erreur pour la stabilité
     )
     dqn.compile(Adam(learning_rate=0.00025), metrics=['mae'])
 
-    # Train the DQN agent on the environment
+    # Entraîner l’agent DQN sur l’environnement
     dqn.fit(env, nb_steps=1000000, visualize=False, verbose=2)
 
-    # Save the trained model weights
+    # Sauvegarder les poids du modèle entraîné
     dqn.save_weights('policy.h5', overwrite=True)
 
-    # Close the environment to free resources
+    # Fermer l’environnement pour libérer les ressources
     env.close()
-
