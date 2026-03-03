@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Question answering system using semantic search and BERT.
+Système de questions-réponses utilisant la recherche sémantique et BERT.
 """
 
 import os
@@ -13,7 +13,7 @@ extract_answer = qa_module.question_answer
 
 def cosine_similarity(vec1, vec2):
     """
-    Compute the cosine similarity between two vectors.
+    Calcule la similarité cosinus entre deux vecteurs.
     """
     dot_product = np.dot(vec1, vec2)
     norm_vec1 = np.linalg.norm(vec1)
@@ -23,12 +23,12 @@ def cosine_similarity(vec1, vec2):
 
 def load_corpus(corpus_path):
     """
-    Loads the text files from the corpus_path directory into a list of strings.
+    Charge les fichiers texte du répertoire corpus_path dans une liste de chaînes de caractères.
     """
     corpus = []
     for filename in os.listdir(corpus_path):
         file_path = os.path.join(corpus_path, filename)
-        if file_path.endswith('.md'):  # Only load markdown files
+        if file_path.endswith('.md'):  # Charger uniquement les fichiers markdown
             with open(file_path, 'r', encoding='utf-8') as f:
                 corpus.append(f.read())
 
@@ -37,53 +37,53 @@ def load_corpus(corpus_path):
 
 def semantic_search(corpus, sentence):
     """
-    Perform semantic search on a corpus of documents.
+    Effectue une recherche sémantique sur un corpus de documents.
     """
-    # Load a pre-trained Sentence-BERT model
+    # Charger un modèle Sentence-BERT préentraîné
     model = SentenceTransformer('all-MiniLM-L6-v2')
 
-    # Generate embeddings for the corpus documents
+    # Générer les embeddings pour les documents du corpus
     doc_embeddings = model.encode(corpus)
 
-    # Generate an embedding for the input sentence
+    # Générer un embedding pour la phrase d’entrée
     query_embedding = model.encode([sentence])[0]
 
-    # Compute cosine similarities between the query and each document
+    # Calculer les similarités cosinus entre la requête et chaque document
     similarities = [cosine_similarity(query_embedding, doc_embedding)
                     for doc_embedding in doc_embeddings]
 
-    # Find the index of the document with the highest similarity score
+    # Trouver l’indice du document ayant le score de similarité le plus élevé
     best_doc_index = np.argmax(similarities)
 
-    # Return the most similar document
+    # Retourner le document le plus similaire
     return corpus[best_doc_index]
 
 def question_answer(corpus_path):
     """
-    Interactively answers questions based on multiple reference texts.
+    Répond de manière interactive aux questions à partir de plusieurs textes de référence.
     """
-    # Load the corpus documents
+    # Charger les documents du corpus
     corpus = load_corpus(corpus_path)
 
-    # Exit keywords
+    # Mots-clés de sortie
     exit_keywords = ['exit', 'quit', 'goodbye', 'bye']
 
     while True:
-        # Get user input
+        # Obtenir l’entrée de l’utilisateur
         user_input = input("Q: ").strip()
 
-        # Check if the user wants to exit
+        # Vérifier si l’utilisateur souhaite quitter
         if user_input.lower() in exit_keywords:
             print("A: Goodbye")
             break
 
-        # Perform semantic search to find the most relevant document
+        # Effectuer une recherche sémantique pour trouver le document le plus pertinent
         relevant_doc = semantic_search(corpus, user_input)
 
-        # Use the question_answer function to extract the answer from the relevant document
+        # Utiliser la fonction question_answer pour extraire la réponse du document pertinent
         answer = extract_answer(user_input, relevant_doc)
 
-        # If no valid answer is found, return a default response
+        # Si aucune réponse valide n’est trouvée, retourner une réponse par défaut
         if answer:
             print(f"A: {answer}")
         else:
