@@ -1,96 +1,65 @@
-# Q-Learning for FrozenLake Environment
+# Temporal Difference Learning
 
-This project demonstrates the implementation of Q-learning for training an agent to navigate the **FrozenLake** environment from **Gymnasium**. The agent learns to navigate the environment by exploring and exploiting actions based on the Q-values stored in a Q-table.
+This project covers various algorithms within the field of Reinforcement Learning, focusing on Temporal Difference (TD) learning methods, including Monte Carlo, TD(λ), and SARSA(λ). These methods are implemented and tested on environments like `FrozenLake` to help understand value function estimation and action-value methods.
 
----
+## Project Structure
 
-## Table of Contents
+The project files are organized as follows:
 
-- [Project Overview](#project-overview)
-- [Modules](#modules)
-  - [0-load_env.py](#0-load-envpy)
-  - [1-q_init.py](#1-q_initpy)
-  - [2-epsilon_greedy.py](#2-epsilon_greedypy)
-  - [3-q_learning.py](#3-q_learningpy)
-  - [4-play.py](#4-playpy)
-- [How to Run](#how-to-run)
-- [Requirements](#requirements)
-- [Author](#author)
+- `0-monte_carlo.py`: Implements the **Monte Carlo** algorithm for estimating state values.
+- `1-td_lambtha.py`: Implements the **TD(λ)** algorithm using eligibility traces for value function estimation.
+- `2-sarsa_lambtha.py`: Implements the **SARSA(λ)** algorithm with eligibility traces, which estimates a Q-table using an epsilon-greedy policy.
 
----
+Each file includes a main file (`0-main.py`, `1-main.py`, and `2-main.py`) to test the functionality of each algorithm.
 
-## Project Overview
+## Files
 
-This project implements Q-learning to train an agent to solve the **FrozenLake-v1** environment. The agent explores the environment with an epsilon-greedy policy, adjusts its Q-values based on rewards, and uses the Q-table to select the optimal actions during gameplay.
-
----
-
-## Modules
-
-### `0-load_env.py`
-This module is responsible for loading the **FrozenLake** environment. It provides a function to load the environment with customizable parameters like the lake map, slipperiness, and rendering mode.
-
-- **Function**: `load_frozen_lake(desc=None, map_name=None, is_slippery=False)`
-
-### `1-q_init.py`
-This module initializes the Q-table, a matrix where the agent's action values are stored. The Q-table is initialized as a numpy array of zeros.
-
-- **Function**: `q_init(env)`
-
-### `2-epsilon_greedy.py`
-This module implements the **epsilon-greedy** policy. It provides a function to choose an action based on the current state and epsilon value, balancing exploration and exploitation.
-
-- **Function**: `epsilon_greedy(Q, state, epsilon)`
-
-### `3-q_learning.py`
-This module contains the core Q-learning algorithm. It trains the agent using the Q-learning formula, updating the Q-table over multiple episodes and adjusting epsilon for exploration decay.
-
-- **Function**: `train(env, Q, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99, epsilon=1, min_epsilon=0.1, epsilon_decay=0.05)`
-
-### `4-play.py`
-Once the agent is trained, this module allows the agent to play an episode by selecting actions based on the trained Q-table. The agent's actions are based purely on the exploitation of the Q-table (greedy policy).
-
-- **Function**: `play(env, Q, max_steps=100)`
-
----
-
-## How to Run
-
-1. Clone the repository.
-2. Install the required dependencies by running:
-   ```bash
-   pip install gymnasium numpy
-   ```
-3. Start by loading the FrozenLake environment:
-   ```python
-   from load_env import load_frozen_lake
-   env = load_frozen_lake()
-   ```
-4. Initialize the Q-table using:
-   ```python
-   from q_init import q_init
-   Q = q_init(env)
-   ```
-5. Train the agent using Q-learning:
-   ```python
-   from q_learning import train
-   Q, total_rewards = train(env, Q)
-   ```
-6. Let the trained agent play and evaluate:
-   ```python
-   from play import play
-   total_rewards, rendered_outputs = play(env, Q)
-   ```
+- **0-monte_carlo.py**  
+  - **Description**: Implements the Monte Carlo method to estimate the value function by averaging returns received after visiting each state. Uses a specified policy to determine actions within the environment.
+  - **Function**: `monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99)`
+  
+- **1-td_lambtha.py**  
+  - **Description**: Implements the TD(λ) algorithm, which uses eligibility traces to update value estimates incrementally. This allows recent states to have more influence, making it a balance between Monte Carlo and TD methods.
+  - **Function**: `td_lambtha(env, V, policy, lambtha=0.9, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99)`
+  
+- **2-sarsa_lambtha.py**  
+  - **Description**: Implements the SARSA(λ) algorithm, which combines SARSA with eligibility traces to update a Q-table. It uses an epsilon-greedy policy for action selection and an exponentially decaying epsilon to balance exploration and exploitation.
+  - **Function**: `sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99, epsilon=1, min_epsilon=0.1, epsilon_decay=0.05)`
 
 ## Requirements
-- Python 3.x
-- gymnasium library for environment simulation
-- numpy library for numerical computations
 
-You can install the dependencies by running the following command:
+Install the necessary libraries using:
+
 ```bash
-pip install gymnasium numpy
+pip install -r requirements.txt
 ```
 
-## Author
-Davis Joseph
+The primary dependencies are:
+
+- `numpy`: Used for mathematical operations and array manipulations.
+- `gymnasium`: Provides various reinforcement learning environments, such as `FrozenLake`.
+
+## Usage
+To run each algorithm, execute the respective main file. For example:
+
+```bash
+./0-main.py
+```
+The output will display the updated value estimates or Q-table after training, reflecting the policy learned by each algorithm.
+
+### Running the Project
+Each main file initializes an environment and tests the algorithm’s functionality. Example usage:
+
+```bash
+chmod +x 0-main.py  # Make the script executable
+./0-main.py         # Run the Monte Carlo algorithm
+```
+
+## Algorithms Overview
+
+1. **Monte Carlo**: Estimates state values based on averaging complete episode returns.
+2. **TD(λ)**: Combines TD learning with eligibility traces to balance between Monte Carlo and standard TD methods.
+3. **SARSA(λ)**: A Q-learning-based approach with eligibility traces, using epsilon-greedy for exploration.
+
+## License
+This project is intended for educational purposes under the Holberton School Machine Learning curriculum.
