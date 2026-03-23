@@ -46,8 +46,8 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100, alpha=0.1,
                      Q[state, action])
 
             # Update eligibility traces, apply lambtha decay
-            eligibility_traces[state, action] += 1
             eligibility_traces *= lambtha * gamma
+            eligibility_traces[state, action] += 1
 
             # Update the Q-table
             Q += alpha * delta * eligibility_traces
